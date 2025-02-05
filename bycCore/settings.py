@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'maq_fichaequipos',
+    'maq_settings',
 ]
 
 MIDDLEWARE = [
