@@ -14,6 +14,14 @@ class TipoEquipoListView(CreateView, ListView):
     context_object_name = 'equipos'
     success_url = reverse_lazy('tipoequipo_list')
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
 class TipoEquipoUpdateView(UpdateView):
     model = TipoEquipo
     form_class = TipoEquipoForm
@@ -21,9 +29,18 @@ class TipoEquipoUpdateView(UpdateView):
 
     def post(self, request, *args, **kwargs):
         equipo = get_object_or_404(TipoEquipo, pk=kwargs['pk'])
-        equipo.prefixeq = request.POST.get('prefixeq')
+        equipo.prefixeq = equipo.prefixeq
         equipo.tipoeq = request.POST.get('tipoeq')
         equipo.save()
+        return JsonResponse({"success": True})
+
+class TipoEquipoDeleteView(DeleteView):
+    model = TipoEquipo
+    success_url = reverse_lazy('tipoequipo_list')
+
+    def post(self, request, *args, **kwargs):
+        equipo = get_object_or_404(TipoEquipo, pk=kwargs['pk'])
+        equipo.delete()
         return JsonResponse({"success": True})
     
 # Vistas de marcas de equipos (CRUD)

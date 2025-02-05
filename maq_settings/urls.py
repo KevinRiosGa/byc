@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import TipoEquipoListView, TipoEquipoUpdateView, MarcaEquipoListView, MarcaEquipoCreateView, MarcaEquipoUpdateView, MarcaEquipoDeleteView, ModeloEquipoListView, ModeloEquipoCreateView, ModeloEquipoUpdateView, ModeloEquipoDeleteView
+from .views import TipoEquipoListView, TipoEquipoUpdateView, TipoEquipoDeleteView, MarcaEquipoListView, MarcaEquipoCreateView, MarcaEquipoUpdateView, MarcaEquipoDeleteView, ModeloEquipoListView, ModeloEquipoCreateView, ModeloEquipoUpdateView, ModeloEquipoDeleteView
 
 urlpatterns = [
      # URLs para TipoEquipo
     path('tipoequipo/', TipoEquipoListView.as_view(), name="tipoequipo_list"),
     path('tipoequipo/<int:pk>/editar/', TipoEquipoUpdateView.as_view(), name="tipoequipo_editar"),
+    path('tipoequipo/<int:pk>/eliminar/', TipoEquipoDeleteView.as_view(), name='tipoequipo_delete'),
 
     # URLs para MarcaEquipo
     path('marcaequipo/', MarcaEquipoListView.as_view(), name="marcaequipo_list"),

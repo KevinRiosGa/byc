@@ -14,6 +14,12 @@ class TipoEquipoForm(forms.ModelForm):
             'tipoeq': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de equipo'}),
         }
 
+    def clean_prefixeq(self):
+        prefixeq = self.cleaned_data.get('prefixeq')
+        if TipoEquipo.objects.filter(prefixeq=prefixeq).exists():
+            raise forms.ValidationError("El prefijo ya existe.")
+        return prefixeq
+
 class MarcaEquipoForm(forms.ModelForm):
     class Meta:
         model = MarcaEquipo
