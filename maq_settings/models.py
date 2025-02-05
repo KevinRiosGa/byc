@@ -3,8 +3,8 @@ from django.db import models
 # Create your models here.
 
 class TipoEquipo(models.Model):
-    prefixeq = models.CharField(max_length=2, verbose_name='Prefijo', unique=True, blank=False, null=False)
-    tipoeq = models.CharField(max_length=100, verbose_name='Tipo equipo', blank=False, null=False)
+    prefixeq = models.CharField(max_length=2, unique=True, blank=False, null=False)
+    tipoeq = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
         return self.tipoeq
