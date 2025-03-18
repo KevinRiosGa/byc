@@ -30,8 +30,3 @@ class MarcaEquipoForm(forms.ModelForm):
         widgets = {
             'marcaeq': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la marca'}),
         }
-
-class ModeloEquipoForm(forms.ModelForm):
-    class Meta:
-        model = ModeloEquipo
-        fields = ['tipoeq_id', 'marcaeq_id', 'modeloeq']

@@ -15,12 +15,4 @@ class MarcaEquipo(models.Model):
     def __str__(self):
         return self.marcaeq
 
-class ModeloEquipo(models.Model):
-    tipoeq_id = models.ForeignKey(TipoEquipo, on_delete=models.PROTECT)
-    marcaeq_id = models.ForeignKey(MarcaEquipo, on_delete=models.PROTECT)
-    modeloeq = models.CharField(max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.modeloeq
-
 
