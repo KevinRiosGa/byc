@@ -1,7 +1,7 @@
 {% extends 'home/index.html' %}
 {% load static %}
 
-{% block title %}Modelos de Equipo{% endblock %}
+{% block title %}Modelos de equipo{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
@@ -9,21 +9,21 @@
 
 <div class="card">
     <div class="card-header bg-dark text-white">
-        Gestión de Modelos de Equipo
+        Gestión de modelos de equipo
     </div>
     <div class="card-body p-4">
         <button class="btn btn-success btn-sm mb-2" 
             data-bs-toggle="modal" 
             data-bs-target="#crearModal">
             <i class="bi bi-plus-square me-1"></i>
-            Crear Modelo
+            Crear modelo
         </button>
         <table id="modeloEquipoTable" class="display table-striped compact hover">
             <thead>
                 <tr>
                     <th>Modelo</th>
                     <th>Marca</th>
-                    <th>Tipo de Equipo</th>
+                    <th>Tipo de equipo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -62,14 +62,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearModalLabel">Crear Modelo</h5>
+                <h5 class="modal-title" id="crearModalLabel">Crear modelo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <form id="form-add-modelo">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_tipoeq" class="form-label">Tipo de Equipo</label>
+                        <label for="id_tipoeq" class="form-label">Tipo de equipo</label>
                         {{ form.tipoeq }}
                     </div>
                     <div class="mb-3">
@@ -94,7 +94,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Modelo</h5>
+                <h5 class="modal-title" id="editModalLabel">Editar modelo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -103,7 +103,7 @@
                     {% csrf_token %}
                     <input type="hidden" id="edit-id-modelo">
                     <div class="mb-3">
-                        <label for="edit-tipoeq" class="form-label">Tipo de Equipo</label>
+                        <label for="edit-tipoeq" class="form-label">Tipo de equipo</label>
                         <select class="form-control form-control-sm" id="edit-tipoeq" required>
                             {% for tipo in form.tipoeq.field.queryset %}
                                 <option value="{{ tipo.id }}">{{ tipo.tipoeq }}</option>
@@ -136,7 +136,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Eliminar Modelo</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar modelo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -154,5 +154,4 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
 <script src="{% static 'js/modelo_equipo.js' %}"></script>
-<script src="{% static 'js/textoFormateador.js' %}"></script>
 {% endblock %} 

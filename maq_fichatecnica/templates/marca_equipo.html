@@ -1,7 +1,7 @@
 {% extends 'home/index.html' %}
 {% load static %}
 
-{% block title %}Marcas de Equipo{% endblock %}
+{% block title %}Marcas de equipo{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
@@ -9,14 +9,14 @@
 
 <div class="card">
     <div class="card-header bg-dark text-white">
-        Gestión de Marcas de Equipo
+        Gestión de marcas de equipo
     </div>
     <div class="card-body p-4">
         <button class="btn btn-success btn-sm mb-2" 
             data-bs-toggle="modal" 
             data-bs-target="#crearModal">
             <i class="bi bi-plus-square me-1"></i>
-            Crear Marca
+            Crear marca
         </button>
         <table id="marcaEquipoTable" class="display table-striped compact hover">
             <thead>
@@ -65,7 +65,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearModalLabel">Crear Marca</h5>
+                <h5 class="modal-title" id="crearModalLabel">Crear marca</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -76,7 +76,7 @@
                         {{ form.marcaeq }}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Tipos de Equipo</label>
+                        <label class="form-label">Tipos de equipo</label>
                         <div class="form-check-group">
                             {{ form.tipoeq }}
                         </div>
@@ -95,7 +95,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Marca</h5>
+                <h5 class="modal-title" id="editModalLabel">Editar marca</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -132,7 +132,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Eliminar Marca</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar marca</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -150,5 +150,4 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
 <script src="{% static 'js/marca_equipo.js' %}"></script>
-<script src="{% static 'js/textoFormateador.js' %}"></script>
 {% endblock %} 
