@@ -45,7 +45,7 @@
     <div class="sidebar" id="sidebar">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" href="{% url 'home' %}">
                     <i class="bi bi-house-door me-2"></i> Inicio
                 </a>
             </li>
@@ -77,14 +77,31 @@
                 <div class="collapse" id="collapseUsers">
                     <ul class="nav flex-column ps-4">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Equipos</a>
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-truck me-2"></i>
+                                Equipos
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Ficha técnica</a>
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-folder2-open me-2"></i>
+                                Fichas técnicas
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Configuraciones</a>
+                            <a class="nav-link" data-bs-toggle="collapse" href="#submenuMaqConfig" role="button" aria-expanded="false" aria-controls="submenuMaqConfig">
+                                <i class="bi bi-gear me-2"></i> Configuración
+                            </a>
                         </li>
+                        <div class="collapse" id="submenuMaqConfig">
+                            <ul class="nav flex-column ps-4">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'tipo_equipo_list' %}">Tipos de equipos</a>
+                                    <a class="nav-link" href="{% url 'marca_equipo_list' %}">Marcas</a>
+                                    <a class="nav-link" href="{% url 'modelo_equipo_list' %}">Modelos</a>
+                                </li>
+                            </ul>
+                        </div>
                     </ul>
                 </div>
             </li>
