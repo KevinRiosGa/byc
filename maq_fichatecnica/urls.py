@@ -18,4 +18,15 @@ urlpatterns = [
     path('modelo_equipo/<int:pk>/delete/', views.ModeloEquipoDeleteView.as_view(), name='modelo_equipo_delete'),
 
     path('ajax/marcas_por_tipo/', views.marcas_por_tipo, name='marcas_por_tipo'),
+    
+    # URLs para fichas técnicas
+    path('ficha_tecnica/', views.FichaTecnicaListView.as_view(), name='ficha_tecnica_list'),
+    path('ficha_tecnica/create/', views.FichaTecnicaCreateView.as_view(), name='ficha_tecnica_create'),
+    path('ficha_tecnica/<int:pk>/update/', views.FichaTecnicaUpdateView.as_view(), name='ficha_tecnica_update'),
+    path('ficha_tecnica/<int:pk>/delete/', views.FichaTecnicaDeleteView.as_view(), name='ficha_tecnica_delete'),
+    
+    # URLs para AJAX
+    path('ajax/unidades_por_tipo_dato/', views.unidades_por_tipo_dato, name='unidades_por_tipo_dato'),
+    path('ajax/agregar_seccion_formset/', views.agregar_seccion_formset, name='agregar_seccion_formset'),
+    path('ajax/agregar_especificacion_formset/', views.agregar_especificacion_formset, name='agregar_especificacion_formset'),
 ] 

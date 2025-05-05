@@ -1,8 +1,8 @@
 $(document).ready(function() {
     // Inicializar DataTable
     const table = $('#regionTable').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            "language": {
+                url: 'https://cdn.datatables.net/plug-ins/2.3.0/i18n/es-CL.json'
         }
     });
 

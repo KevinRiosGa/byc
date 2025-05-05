@@ -1,11 +1,12 @@
+
 $(document).ready(function() {
     // Inicializar DataTable
     var table = $('#tipoEquipoTable').DataTable({
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
         }
     });
-
+    
     // Limpiar formulario al cerrar modal de creación
     $('#crearModal').on('hidden.bs.modal', function() {
         $('#form-add')[0].reset();

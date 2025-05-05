@@ -39,3 +39,20 @@ class UnidadMedida(models.Model):
     codigo = models.CharField(max_length=3, unique=True, null=False, blank=False)
     descripcion = models.CharField(max_length=100, null=False, blank=False)
 
+    def __str__(self):
+        return f"{self.codigo}"
+    
+    class Meta:
+        verbose_name = 'Unidad de Medida'
+        verbose_name_plural = 'Unidades de Medida'
+
+class TipoDato(models.Model):
+    nombre = models.CharField(max_length=50)
+    activo = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.nombre
+    
+    class Meta:
+        verbose_name = 'Tipo de Dato'
+        verbose_name_plural = 'Tipos de Dato'

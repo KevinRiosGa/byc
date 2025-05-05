@@ -17,8 +17,8 @@ function formatearTexto(texto) {
         texto = texto.replace(new RegExp(conTilde, 'g'), sinTilde);
     }
     
-    // Eliminar símbolos y caracteres especiales (mantener letras, números y espacios)
-    texto = texto.replace(/[^A-Z0-9\s]/g, '');
+    // Eliminar símbolos y caracteres especiales (mantener letras, números, espacios y algunos símbolos específicos)
+    texto = texto.replace(/[^A-Z0-9\s\@°/]/g, '');
     
     return texto;
 }
