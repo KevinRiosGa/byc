@@ -1,0 +1,144 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+{% block title %}Secciones de Ficha Técnica{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="{% static 'css/seccion_ficha.css' %}">
+
+{% if messages %}
+<div class="messages mb-3">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            Gestión de secciones de ficha técnica
+        </div>
+    </div>
+    <div class="card-body p-3">
+        <a href="{% url 'seccion_ficha_create' %}" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-square me-1"></i>
+            Crear sección
+        </a>
+        {% if not secciones %}
+            <div class="alert alert-info">
+                No hay secciones registradas. Haga clic en "Crear sección" para comenzar.
+            </div>
+        {% else %}
+            <table id="seccionFichaTable" class="display table-striped compact hover">
+                <thead>
+                    <tr>
+                        <th>Sección</th>
+                        <th>Tipos de Equipo</th>
+                        <th>Especificaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seccion in secciones %}
+                    <tr>
+                        <td>{{ seccion.seccion }}</td>
+                        <td>
+                            {% for tipo in seccion.tipoeq.all %}
+                                <span class="badge bg-info text-dark">{{ tipo.tipoeq }}</span>
+                            {% empty %}
+                                <span class="text-muted">Sin tipos</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <div class="especificaciones-container">
+                                {% if seccion.especificacionficha_set.count > 0 %}
+                                    <div class="especificaciones-resumen">
+                                        <span class="badge bg-success">{{ seccion.especificacionficha_set.count }} especificaciones</span>
+                                        <button type="button" class="btn btn-warning btn-sm toggle-specs" data-section="{{ seccion.id }}">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="especificaciones-detalle" id="specs-{{ seccion.id }}" style="display:none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm specs-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Especificación</th>
+                                                        <th>Tipo</th>
+                                                        <th>Unidad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for espec in seccion.especificacionficha_set.all|dictsort:"orden" %}
+                                                    <tr>
+                                                        <td>{{ espec.orden }}</td>
+                                                        <td>{{ espec.especificacion }}</td>
+                                                        <td>{{ espec.tipodato }}</td>
+                                                        <td>{{ espec.unidadmedida }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">Sin especificaciones</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'seccion_ficha_update' seccion.id %}" class="btn btn-primary btn-sm" title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form method="post" action="{% url 'seccion_ficha_delete' seccion.id %}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta sección?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+<script>
+$(document).ready(function() {
+    // Inicializar DataTable
+    var table = $('#seccionFichaTable').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.3.0/i18n/es-CL.json'
+        },
+        columnDefs: [
+            { orderable: false, targets: [2, 3] }
+        ],
+        order: [[0, 'asc']]
+    });
+    
+    // Manejar la visualización de especificaciones
+    $('.toggle-specs').on('click', function() {
+        var sectionId = $(this).data('section');
+        $('#specs-' + sectionId).toggle();
+        $(this).find('i').toggleClass('bi-eye bi-eye-slash');
+        
+        // Actualizar texto del botón
+        if ($(this).find('i').hasClass('bi-eye')) {
+            $(this).html('<i class="bi bi-eye"></i>');
+        } else {
+            $(this).html('<i class="bi bi-eye-slash"></i>');
+        }
+    });
+});
+</script>
+{% endblock %} 

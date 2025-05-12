@@ -39,46 +39,30 @@ class ModeloEquipo(models.Model):
         verbose_name = 'Modelo'
         verbose_name_plural = 'Modelos'
 
-class FichaTecnica(models.Model):
-    nombre = models.CharField(max_length=200)
-    tipoeq = models.ForeignKey(TipoEquipo, on_delete=models.CASCADE)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_modificacion = models.DateTimeField(auto_now=True)
-    activo = models.BooleanField(default=True)
-    
-    def __str__(self):
-        return f"Ficha: {self.nombre} - {self.tipoeq.tipoeq}"
-    
-    class Meta:
-        verbose_name = 'Ficha Técnica'
-        verbose_name_plural = 'Fichas Técnicas'
+class SeccionFicha(models.Model):
+    seccion = models.CharField(max_length=150, null=False, blank=False)
+    tipoeq = models.ManyToManyField(TipoEquipo)
 
-class Seccion(models.Model):
-    fichaTecnica = models.ForeignKey(FichaTecnica, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=100)
-    orden = models.PositiveIntegerField()
-    activo = models.BooleanField(default=True)
-    
     def __str__(self):
-        return f"{self.orden}. {self.nombre}"
+        return f"{self.seccion}"
     
     class Meta:
+        ordering = ['seccion']
         verbose_name = 'Sección'
         verbose_name_plural = 'Secciones'
-        ordering = ['orden']
 
-class Especificacion(models.Model):
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=200)
-    orden = models.PositiveIntegerField()
-    tipoDato = models.ForeignKey(TipoDato, on_delete=models.CASCADE)
-    unidadMedida = models.ForeignKey(UnidadMedida, on_delete=models.SET_NULL, null=True, blank=True)
-    activo = models.BooleanField(default=True)
-    
+class EspecificacionFicha(models.Model):
+    orden = models.IntegerField(null=False, blank=False)
+    seccion = models.ForeignKey(SeccionFicha, on_delete=models.CASCADE, null=False, blank=False)
+    especificacion = models.CharField(max_length=150, null=False, blank=False)
+    tipodato = models.ForeignKey(TipoDato, on_delete=models.CASCADE, null=False, blank=False)
+    unidadmedida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE, null=False, blank=False)
+
     def __str__(self):
-        return f"{self.seccion.nombre} - {self.nombre}"
+        return f"{self.especificacion}"
     
     class Meta:
+        ordering = ['especificacion']
         verbose_name = 'Especificación'
         verbose_name_plural = 'Especificaciones'
-        ordering = ['seccion__orden', 'orden']
+    
