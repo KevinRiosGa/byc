@@ -16,7 +16,7 @@ $(document).ready(function() {
     $('#form-add-marca').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
-            url: '/maq_fichatecnica/marca_equipo/create/',
+            url: '/maq_fichatecnica/marca_equipo/crear/',
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
@@ -62,7 +62,7 @@ $(document).ready(function() {
             tipoeqs.push($(this).val());
         });
         $.ajax({
-            url: '/maq_fichatecnica/marca_equipo/' + id + '/update/',
+            url: '/maq_fichatecnica/marca_equipo/' + id + '/editar/',
             type: 'POST',
             data: {
                 marcaeq: $('#edit-marcaeq').val(),
@@ -99,7 +99,7 @@ $(document).ready(function() {
     $('#confirm-delete-marca').click(function() {
         var id = $('#delete-id-marca').val();
         $.ajax({
-            url: '/maq_fichatecnica/marca_equipo/' + id + '/delete/',
+            url: '/maq_fichatecnica/marca_equipo/' + id + '/eliminar/',
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()

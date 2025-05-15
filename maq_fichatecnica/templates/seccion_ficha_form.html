@@ -1,7 +1,9 @@
 {% extends 'home/index.html' %}
 {% load static %}
 
-{% block title %}Crear Sección de Ficha Técnica{% endblock %}
+{% block title %}
+    {% if object %}Editar{% else %}Crear{% endif %} Sección de Ficha Técnica
+{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/seccion_ficha.css' %}">
@@ -9,14 +11,18 @@
 <div class="card">
     <div class="card-header bg-dark text-white">
         <div class="d-flex justify-content-between align-items-center">
-            Crear nueva sección
+            {% if object %}
+                Editar sección: {{ object.seccion }}
+            {% else %}
+                Crear nueva sección
+            {% endif %}
             <a href="{% url 'seccion_ficha_list' %}" class="btn btn-sm btn-secondary">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
     </div>
     <div class="card-body p-3">
-        <form method="post" id="seccion-ficha-form" action="{% url 'seccion_ficha_create' %}">
+        <form method="post" id="seccion-ficha-form" action="{% if object %}{% url 'seccion_ficha_update' object.id %}{% else %}{% url 'seccion_ficha_create' %}{% endif %}">
             {% csrf_token %}
             
             <div class="card mb-3 mt-1">
@@ -88,16 +94,16 @@
                         <table class="table table-borderless mb-0" id="tabla-especificaciones">
                             <thead>
                                 <tr>
-                                    <th>Orden</th>
+                                    <th style="width: 70px;">Orden</th>
                                     <th>Especificación</th>
                                     <th>Tipo dato</th>
                                     <th>Un. Medida</th>
-                                    <th>Acciones</th>
+                                    <th style="width: 100px; text-align: center;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="especificaciones-container">
                                 {% for form in formset.forms %}
-                                    <tr class="especificacion-form">
+                                    <tr class="especificacion-form" {% if form.instance.pk %}data-id="{{ form.instance.pk }}"{% endif %}>
                                         <td>
                                             {{ form.id }}
                                             <span class="orden-numero">{{ forloop.counter }}</span>
@@ -140,7 +146,6 @@
                                         </td>
                                     </tr>
                                 {% empty %}
-                                    {# Asegurar que al menos hay una fila cuando no hay formularios #}
                                     <tr class="especificacion-form">
                                         <td>
                                             <span class="orden-numero">1</span>
@@ -163,7 +168,9 @@
             
             <div class="text-end mt-3">
                 <a href="{% url 'seccion_ficha_list' %}" class="btn btn-secondary me-2">Cancelar</a>
-                <button type="submit" class="btn btn-primary" id="btn-guardar">Guardar sección</button>
+                <button type="submit" class="btn btn-primary" id="btn-guardar">
+                    {% if object %}Guardar cambios{% else %}Guardar sección{% endif %}
+                </button>
             </div>
         </form>
     </div>
@@ -172,9 +179,8 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="{% static 'js/seccion_ficha.js' %}"></script>
 <script>
-    // Asegurar que el formulario se envíe correctamente
     $(document).ready(function() {
-        console.log("Formulario de creación inicializado");
+        console.log("Formulario {% if object %}de edición{% else %}de creación{% endif %} inicializado");
         
         // Si no hay filas, añadir una por defecto
         if ($('#especificaciones-container tr.especificacion-form').length === 0) {
@@ -189,8 +195,7 @@
         // Agregar evento de envío al formulario para debuggear
         $("#seccion-ficha-form").submit(function() {
             console.log("Formulario enviado");
-            // No evitar el envío del formulario
         });
     });
 </script>
-{% endblock %}
+{% endblock %} 

@@ -16,7 +16,7 @@ $(document).ready(function() {
     $('#form-add').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
-            url: '/maq_fichatecnica/tipo_equipo/create/',
+            url: '/maq_fichatecnica/tipo_equipo/crear/',
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
@@ -56,7 +56,7 @@ $(document).ready(function() {
         var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
         
         $.ajax({
-            url: '/maq_fichatecnica/tipo_equipo/' + id + '/update/',
+            url: '/maq_fichatecnica/tipo_equipo/' + id + '/editar/',
             type: 'POST',
             data: {
                 prefixeq: $('#edit-prefixeq').val(),
@@ -92,7 +92,7 @@ $(document).ready(function() {
     $('#confirm-delete').click(function() {
         var id = $('#delete-id').val();
         $.ajax({
-            url: '/maq_fichatecnica/tipo_equipo/' + id + '/delete/',
+            url: '/maq_fichatecnica/tipo_equipo/' + id + '/eliminar/',
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()

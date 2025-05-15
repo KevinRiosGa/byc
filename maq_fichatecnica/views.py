@@ -214,7 +214,7 @@ class SeccionFichaListView(ListView):
 class SeccionFichaCreateView(CreateView):
     model = SeccionFicha
     form_class = SeccionFichaForm
-    template_name = 'seccion_ficha_crear.html'
+    template_name = 'seccion_ficha_form.html'
     success_url = reverse_lazy('seccion_ficha_list')
 
     def get_context_data(self, **kwargs):
@@ -240,7 +240,7 @@ class SeccionFichaCreateView(CreateView):
 class SeccionFichaUpdateView(UpdateView):
     model = SeccionFicha
     form_class = SeccionFichaForm
-    template_name = 'seccion_ficha_editar.html'
+    template_name = 'seccion_ficha_form.html'
     success_url = reverse_lazy('seccion_ficha_list')
 
     def get_context_data(self, **kwargs):
