@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'main_home',
     'gen_settings',
+    'maq_equipo',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,157 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+{% block title %}Modelos de equipo{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="{% static 'css/modelo_equipo.css' %}">
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        Gestión de modelos de equipo
+    </div>
+    <div class="card-body p-4">
+        <button class="btn btn-success btn-sm mb-2" 
+            data-bs-toggle="modal" 
+            data-bs-target="#crearModal">
+            <i class="bi bi-plus-square me-1"></i>
+            Crear modelo
+        </button>
+        <table id="modeloEquipoTable" class="display table-striped compact hover">
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Marca</th>
+                    <th>Tipo de equipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for modelo in modelos %}
+                <tr>
+                    <td>{{ modelo.modeloeq }}</td>
+                    <td>{{ modelo.marcaeq.marcaeq }}</td>
+                    <td>{{ modelo.tipoeq.tipoeq }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm edit-btn" 
+                                data-id="{{ modelo.id }}" 
+                                data-tipoeq="{{ modelo.tipoeq.id }}"
+                                data-marcaeq="{{ modelo.marcaeq.id }}"
+                                data-modeloeq="{{ modelo.modeloeq }}"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editModal">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-btn" 
+                                data-id="{{ modelo.id }}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteModal">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para Crear Modelo -->
+<div class="modal fade" id="crearModal" tabindex="-1" aria-labelledby="crearModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearModalLabel">Crear modelo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-add-modelo">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_tipoeq" class="form-label">Tipo de equipo</label>
+                        {{ form.tipoeq }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_marcaeq" class="form-label">Marca</label>
+                        {{ form.marcaeq }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_modeloeq" class="form-label">Modelo</label>
+                        {{ form.modeloeq }}
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Modelo -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar modelo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="edit-message" style="display: none; padding: 10px; margin-bottom: 10px; border-radius: 5px;"></div>
+                <form id="form-edit-modelo">
+                    {% csrf_token %}
+                    <input type="hidden" id="edit-id-modelo">
+                    <div class="mb-3">
+                        <label for="edit-tipoeq" class="form-label">Tipo de equipo</label>
+                        <select class="form-control form-control-sm" id="edit-tipoeq" required>
+                            {% for tipo in form.tipoeq.field.queryset %}
+                                <option value="{{ tipo.id }}">{{ tipo.tipoeq }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-marcaeq" class="form-label">Marca</label>
+                        <select class="form-control form-control-sm" id="edit-marcaeq" required>
+                            {% for marca in form.marcaeq.field.queryset %}
+                                <option value="{{ marca.id }}">{{ marca.marcaeq }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-modeloeq" class="form-label">Modelo</label>
+                        <input type="text" class="form-control form-control-sm" id="edit-modeloeq" required>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Confirmar Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar modelo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este modelo?</p>
+                <input type="hidden" id="delete-id-modelo">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-modelo">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+<script src="{% static 'js/modelo_equipo.js' %}"></script>
+{% endblock %} 

@@ -1,0 +1,153 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+{% block title %}Marcas de equipo{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="{% static 'css/marca_equipo.css' %}">
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        Gestión de marcas de equipo
+    </div>
+    <div class="card-body p-4">
+        <button class="btn btn-success btn-sm mb-2" 
+            data-bs-toggle="modal" 
+            data-bs-target="#crearModal">
+            <i class="bi bi-plus-square me-1"></i>
+            Crear marca
+        </button>
+        <table id="marcaEquipoTable" class="display table-striped compact hover">
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Tipos de Equipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for marca in marcas %}
+                <tr>
+                    <td>{{ marca.marcaeq }}</td>
+                    <td>
+                        {% for tipo in marca.tipoeq.all %}
+                            <span class="badge bg-info text-dark">{{ tipo.tipoeq }}</span>
+                        {% empty %}
+                            <span class="text-muted">Sin tipos</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm edit-btn" 
+                                data-id="{{ marca.id }}" 
+                                data-marcaeq="{{ marca.marcaeq }}"
+                                data-tipoeq="{% for tipo in marca.tipoeq.all %}{{ tipo.id }},{% endfor %}"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editModal">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-btn" 
+                                data-id="{{ marca.id }}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteModal">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para Crear Marca -->
+<div class="modal fade" id="crearModal" tabindex="-1" aria-labelledby="crearModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearModalLabel">Crear marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-add-marca">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_marcaeq" class="form-label">Marca</label>
+                        {{ form.marcaeq }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipos de equipo</label>
+                        <div class="form-check-group">
+                            {{ form.tipoeq }}
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Marca -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="edit-message" style="display: none; padding: 10px; margin-bottom: 10px; border-radius: 5px;"></div>
+                <form id="form-edit-marca">
+                    {% csrf_token %}
+                    <input type="hidden" id="edit-id-marca">
+                    <div class="mb-3">
+                        <label for="edit-marcaeq" class="form-label">Marca</label>
+                        <input type="text" class="form-control form-control-sm" id="edit-marcaeq" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipos de Equipo</label>
+                        <div id="edit-tipoeq-checkboxes">
+                            {% for tipo in form.tipoeq.field.queryset %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="tipoeq" value="{{ tipo.id }}" id="edit-tipoeq-{{ tipo.id }}">
+                                    <label class="form-check-label" for="edit-tipoeq-{{ tipo.id }}">{{ tipo.tipoeq }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Confirmar Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar esta marca?</p>
+                <input type="hidden" id="delete-id-marca">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-marca">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+<script src="{% static 'js/marca_equipo.js' %}"></script>
+{% endblock %} 
