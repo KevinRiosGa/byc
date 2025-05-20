@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Sitio Django{% endblock %}</title>
+    
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+</head>
+<body>
+    <!-- Navbar superior -->
+    <nav class="navbar navbar-expand navbar-dark fixed-top" style="background-color: #212529;">
+        <div class="container-fluid">
+            <!-- Botón hamburguesa para mostrar/ocultar sidebar -->
+            <button class="btn btn-dark me-2" type="button" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <!-- Logo o nombre del sitio -->
+            <img src="{% static 'img/logo Gruas.png' %}" alt="Logo" class="navbar-brand" style="width:150px; height: 35px;">
+            
+            <!-- Navbar superior derecha -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle me-1"></i> Usuario
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Sidebar vertical -->
+    <div class="sidebar" id="sidebar">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'home' %}">
+                    <i class="bi bi-house-door me-2"></i> Inicio
+                </a>
+            </li>
+            <!-- Menú colapsable con submenú -->
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#collapseProducts" role="button" aria-expanded="false" aria-controls="collapseProducts">
+                    <i class="bi bi-people me-2"></i> Recursos Humanos
+                </a>
+                <div class="collapse" id="collapseProducts">
+                    <ul class="nav flex-column ps-4">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'empresa_list' %}">Lista de productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'comuna_list' %}">Agregar producto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Categorías</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            <!-- Menú de maquinarias -->
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#collapseUsers" role="button" aria-expanded="false" aria-controls="collapseUsers">
+                    <i class="bi bi-tools me-2"></i> Maquinarias
+                </a>
+                <div class="collapse" id="collapseUsers">
+                    <ul class="nav flex-column ps-4">
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#submenuEquipos" role="button" aria-expanded="false" aria-controls="submenuEquipos">
+                                <i class="bi bi-truck me-2"></i> Equipos
+                            </a>
+                        </li>
+                        <div class="collapse" id="submenuEquipos">
+                            <ul class="nav flex-column ps-4">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'tipo_equipo_list' %}">Tipos de equipos</a>
+                                    <a class="nav-link" href="{% url 'marca_equipo_list' %}">Marcas</a>
+                                    <a class="nav-link" href="{% url 'modelo_equipo_list' %}">Modelos</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#submenuFichas" role="button" aria-expanded="false" aria-controls="submenuFichas">
+                                <i class="bi bi-folder2-open me-2"></i>
+                                Fichas técnicas
+                            </a>
+                        </li>
+                        <div class="collapse" id="submenuFichas">
+                            <ul class="nav flex-column ps-4">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'plantilla_ficha_tecnica_list' %}">Plantilla ficha tecnica</a>
+                                    <a class="nav-link" href="{% url 'seccion_ficha_list' %}">Secciones</a>
+                                </li>
+                            </ul> 
+                        </div>
+                    </ul>
+                </div>
+            </li>
+
+
+            <!-- Menú de maquinarias -->
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#submenuBases" role="button" aria-expanded="false" aria-controls="submenuBases">
+                    <i class="bi bi-sliders2 me-2"></i> Bases
+                </a>
+                <div class="collapse" id="submenuBases">
+                    <ul class="nav flex-column ps-4">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'empresa_list' %}"> <i class="bi bi-buildings me-2"></i> Empresas</a>
+                            <a class="nav-link" data-bs-toggle="collapse" href="#submenuTablas" role="button" aria-expanded="false" aria-controls="submenuTablas">
+                                <i class="bi bi-table me-2"></i> Tablas
+                            </a>
+                        </li>
+                        <div class="collapse" id="submenuTablas">
+                            <ul class="nav flex-column ps-4">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'region_list' %}">Regiones</a>
+                                    <a class="nav-link" href="{% url 'comuna_list' %}">Comunas</a>
+                                    <a class="nav-link" href="{% url 'unidad_medida_list' %}">Unidades de medida</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-file-earmark-text me-2"></i> Reportes
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-gear me-2"></i> Configuración
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content p-4" id="mainContent">
+        {% block content %}
+        <!-- El contenido específico de cada página irá aquí -->
+        <div class="container-fluid">
+            <h1 class="mt-4">Bienvenido al Panel de Control</h1>
+            <p>Este es el contenido principal de tu aplicación.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-info-circle me-2"></i> Información
+                </div>
+                <div class="card-body">
+                    <p>Esta plantilla incluye:</p>
+                    <ul>
+                        <li>Navbar superior con menú de usuario</li>
+                        <li>Sidebar colapsable perfectamente alineado a la izquierda</li>
+                        <li>Submenús desplegables</li>
+                        <li>Diseño completamente responsivo</li>
+                        <li>Botón hamburguesa para mostrar/ocultar el sidebar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/textoFormateador.js' %}"></script>
+</body>
+</html>
