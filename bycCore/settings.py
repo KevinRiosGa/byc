@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'main_home',
     'gen_settings',
     'maq_equipo',
+    'maq_fichatecnica',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

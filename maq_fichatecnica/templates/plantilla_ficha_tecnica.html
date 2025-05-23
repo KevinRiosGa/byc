@@ -1,0 +1,163 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+{% block title %}Plantillas de Ficha Técnica{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="{% static 'css/seccion_ficha.css' %}">
+
+{% if messages %}
+<div class="messages mb-3">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            Gestión de plantillas de ficha técnica
+        </div>
+    </div>
+    <div class="card-body p-3">
+        <a href="{% url 'plantilla_ficha_tecnica_create' %}" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-square me-1"></i>
+            Crear plantilla
+        </a>
+        {% if not plantillas %}
+            <div class="alert alert-info mt-3">
+                No hay plantillas registradas. Haga clic en "Crear plantilla" para comenzar.
+            </div>
+        {% else %}
+            <table id="plantillaFichaTable" class="display table-striped compact hover mt-3">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo de Equipo</th>
+                        <th>Fecha Modificación</th>
+                        <th>Secciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plantilla in plantillas %}
+                    <tr>
+                        <td>{{ plantilla.nombre }}</td>
+                        <td>{{ plantilla.tipoeq }}</td>
+                        <td>{{ plantilla.fecha_modificacion|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <div class="secciones-container">
+                                {% if plantilla.secciones.count > 0 %}
+                                    <div class="secciones-resumen">
+                                        <span class="badge bg-success">{{ plantilla.secciones.count }} secciones</span>
+                                        <button type="button" class="btn btn-warning btn-sm toggle-secs" data-plantilla="{{ plantilla.id }}">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="secciones-detalle" id="secs-{{ plantilla.id }}" style="display:none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-sm secs-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Sección</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for sec in plantilla.secciones.all|dictsort:"orden" %}
+                                                    <tr>
+                                                        <td>{{ sec.orden }}</td>
+                                                        <td>{{ sec.seccion }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">Sin secciones</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'plantilla_ficha_tecnica_update' plantilla.id %}" class="btn btn-primary btn-sm" title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete" title="Eliminar" data-id="{{ plantilla.id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">ADVERTENCIA: Al eliminar esta plantilla se eliminarán permanentemente todas las secciones asociadas.</p>
+                <p class="fw-bold mt-3">¿Está seguro de que desea continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+<script>
+$(document).ready(function() {
+    // Inicializar DataTable
+    var table = $('#plantillaFichaTable').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.3.0/i18n/es-CL.json'
+        },
+        columnDefs: [
+            { orderable: false, targets: [3, 4] }
+        ],
+        order: [[2, 'desc']]
+    });
+    
+    // Manejar la visualización de secciones
+    $('.toggle-secs').on('click', function() {
+        var plantillaId = $(this).data('plantilla');
+        $('#secs-' + plantillaId).toggle();
+        $(this).find('i').toggleClass('bi-eye bi-eye-slash');
+        
+        // Actualizar texto del botón
+        if ($(this).find('i').hasClass('bi-eye')) {
+            $(this).html('<i class="bi bi-eye"></i>');
+        } else {
+            $(this).html('<i class="bi bi-eye-slash"></i>');
+        }
+    });
+    
+    // Manejar el botón de eliminar
+    $('.btn-delete').on('click', function() {
+        var plantillaId = $(this).data('id');
+        var action = "{% url 'plantilla_ficha_tecnica_delete' 0 %}".replace("0", plantillaId);
+        $('#deleteForm').attr('action', action);
+    });
+});
+</script>
+{% endblock %} 

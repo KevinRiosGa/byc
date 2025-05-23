@@ -39,7 +39,7 @@ class Empresa(models.Model):
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
 
 class UnidadMedida(models.Model):
-    codigo = models.CharField(max_length=3, unique=True, null=False, blank=False)
+    codigo = models.CharField(max_length=7, unique=True, null=False, blank=False)
     descripcion = models.CharField(max_length=100, null=False, blank=False)
 
     def __str__(self):

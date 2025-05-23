@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('main_home.urls')),
     path('gen_settings/', include('gen_settings.urls')),
     path('maq_equipo/', include('maq_equipo.urls')),
+    path('maq_fichatecnica/', include('maq_fichatecnica.urls')),
 ]

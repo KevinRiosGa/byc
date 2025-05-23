@@ -1,0 +1,510 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar Plantilla{% else %}Crear Plantilla{% endif %} de Ficha Técnica
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/seccion_ficha.css' %}">
+<style>
+    .especificaciones-contenedor {
+        margin-top: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .especificaciones-contenedor .card-header {
+        padding: 4px 8px;
+        background-color: #f8f9fa;
+    }
+    .especificaciones-contenedor .table {
+        margin-bottom: 0;
+    }
+    .especificaciones-contenedor .table th,
+    .especificaciones-contenedor .table td {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+    }
+    .btn-toggle-specs {
+        padding: 0 4px;
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+    .especificaciones-titulo {
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            {% if object %}Editar plantilla: {{ object.nombre }}{% else %}Crear nueva plantilla{% endif %}
+            <a href="{% url 'plantilla_ficha_tecnica_list' %}" class="btn btn-sm btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <div class="card-body p-3">
+        <form method="post" id="plantilla-ficha-form" action="{% if object %}{% url 'plantilla_ficha_tecnica_update' object.id %}{% else %}{% url 'plantilla_ficha_tecnica_create' %}{% endif %}">
+            {% csrf_token %}
+            
+            <div class="card mb-3 mt-1">
+                <div class="card-header bg-secondary text-white">
+                    Información General
+                </div>
+                <div class="card-body">
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label">Nombre de la Plantilla <span class="text-danger">*</span></label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.nombre.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_tipoeq" class="form-label">Tipo de Equipo <span class="text-danger">*</span></label>
+                        {{ form.tipoeq }}
+                        {% if form.tipoeq.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.tipoeq.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    Secciones de la Ficha <span class="text-danger">*</span>
+                </div>
+                <div class="card-body p-2">
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in formset.non_form_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {{ formset.management_form }}
+                    <div class="table-responsive">
+                        <table class="table table-borderless mb-0" id="tabla-secciones">
+                            <thead>
+                                <tr>
+                                    <th>Orden</th>
+                                    <th>Sección</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="secciones-container">
+                                {% for form in formset.forms %}
+                                    <tr class="seccion-form">
+                                        <td>
+                                            {{ form.id }}
+                                            <span class="orden-numero">{{ forloop.counter }}</span>
+                                            <input type="hidden" name="{{ form.orden.html_name }}" value="{{ forloop.counter }}" class="orden-input">
+                                        </td>
+                                        <td>
+                                            {{ form.seccion }}
+                                            {% if form.seccion.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.seccion.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <!-- Contenedor para las especificaciones -->
+                                            <div class="especificaciones-contenedor mt-2" style="display:none;">
+                                                <div class="card">
+                                                    <div class="card-header bg-dark text-white py-1">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="especificaciones-titulo small fw-bold">Especificaciones</span>
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-specs ">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-0">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-sm table-bordered mb-0">
+                                                                <thead class="table-secondary">
+                                                                    <tr>
+                                                                        <th class="small">#</th>
+                                                                        <th class="small">Especificación</th>
+                                                                        <th class="small">Tipo</th>
+                                                                        <th class="small">Unidad</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="especificaciones-lista small">
+                                                                    <!-- Las especificaciones se cargarán dinámicamente -->
+                                                                    <tr class="sin-especificaciones">
+                                                                        <td colspan="4" class="text-center">Cargando especificaciones...</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-success btn-sm add-seccion" title="Agregar"><i class="bi bi-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm delete-seccion" title="Eliminar"><i class="bi bi-dash"></i></button>
+                                            <button type="button" class="btn btn-info btn-sm show-especificaciones" title="Ver Especificaciones"><i class="bi bi-info-circle"></i></button>
+                                            <div style="display:none">{{ form.DELETE }}</div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr class="seccion-form">
+                                        <td>
+                                            <span class="orden-numero">1</span>
+                                            <input type="hidden" name="{{ formset.empty_form.orden.html_name|cut:'-__prefix__-'|cut:'__prefix__' }}-0-orden" value="1" class="orden-input">
+                                        </td>
+                                        <td>{{ formset.empty_form.seccion }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-success btn-sm add-seccion" title="Agregar"><i class="bi bi-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm delete-seccion" title="Eliminar"><i class="bi bi-dash"></i></button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-end mt-3">
+                <a href="{% url 'plantilla_ficha_tecnica_list' %}" class="btn btn-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary" id="btn-guardar">Guardar plantilla</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script>
+$(document).ready(function() {
+    // Variables para almacenar datos globales
+    var todasLasSecciones = [];
+    var especificacionesPorSeccion = {}; // Caché de especificaciones por sección
+    
+    // Renumerar filas
+    function renumerarFilas() {
+        $('#secciones-container tr.seccion-form:visible').each(function(index) {
+            var numero = index + 1;
+            $(this).find('.orden-numero').text(numero);
+            $(this).find('.orden-input').val(numero);
+        });
+    }
+    
+    // Función para obtener las secciones ya seleccionadas
+    function obtenerSeccionesSeleccionadas() {
+        var seccionesSeleccionadas = [];
+        
+        $('#secciones-container tr.seccion-form:visible').each(function() {
+            var seccionSelect = $(this).find('select[name$="-seccion"]');
+            var seccionId = seccionSelect.val();
+            
+            if (seccionId && seccionId !== '') {
+                seccionesSeleccionadas.push(seccionId.toString());
+            }
+        });
+        
+        console.log("Secciones seleccionadas:", seccionesSeleccionadas);
+        return seccionesSeleccionadas;
+    }
+    
+    // Función para actualizar las opciones de los selectores de sección
+    function actualizarOpcionesSecciones() {
+        if (!todasLasSecciones || todasLasSecciones.length === 0) {
+            console.log("No hay secciones disponibles para actualizar");
+            return;
+        }
+        
+        var seccionesSeleccionadas = obtenerSeccionesSeleccionadas();
+        
+        // Actualizar cada selector de sección
+        $('#secciones-container tr.seccion-form:visible').each(function() {
+            var seccionSelect = $(this).find('select[name$="-seccion"]');
+            var seccionActual = seccionSelect.val();
+            
+            console.log("Actualizando selector, valor actual:", seccionActual);
+            
+            // Guardar el valor actual
+            seccionSelect.empty();
+            
+            // Agregar las opciones disponibles (las no seleccionadas en otros selectores)
+            $.each(todasLasSecciones, function(i, seccion) {
+                var seccionId = seccion.id.toString();
+                
+                // Incluir la sección si es la actualmente seleccionada o no está en la lista de seleccionadas
+                if (seccionId === seccionActual || seccionesSeleccionadas.indexOf(seccionId) === -1) {
+                    console.log("Agregando opción:", seccion.id, seccion.nombre);
+                    seccionSelect.append($('<option></option>').attr('value', seccion.id).text(seccion.nombre));
+                }
+            });
+            
+            // Restaurar el valor seleccionado
+            if (seccionActual) {
+                seccionSelect.val(seccionActual);
+            }
+        });
+    }
+    
+    // Verificar si estamos en la página de creación/edición
+    if ($('#secciones-container').length) {
+        // Ejecutar la numeración inicial
+        renumerarFilas();
+    }
+    
+    // Actualizar secciones disponibles según el tipo de equipo
+    $('#id_tipoeq').change(function() {
+        var tipoId = $(this).val();
+        console.log("Tipo de equipo cambiado a:", tipoId);
+        
+        if (tipoId) {
+            $.ajax({
+                url: "{% url 'secciones_por_tipo' %}",
+                data: {
+                    'tipo_id': tipoId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Secciones recibidas:", data.secciones);
+                    
+                    // Guardar todas las secciones disponibles
+                    todasLasSecciones = data.secciones;
+                    
+                    if (data.secciones.length > 0) {
+                        // Primero, vaciar todos los selectores excepto los que ya tienen un valor seleccionado
+                        $('select[name$="-seccion"]').each(function() {
+                            if (!$(this).val()) {
+                                $(this).empty();
+                            }
+                        });
+                        
+                        // Actualizar considerando las secciones ya seleccionadas
+                        setTimeout(function() {
+                            actualizarOpcionesSecciones();
+                        }, 100);
+                    } else {
+                        $('select[name$="-seccion"]').empty().append($('<option></option>').text('No hay secciones disponibles'));
+                        console.log("No hay secciones disponibles para este tipo de equipo");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar secciones:", error);
+                    $('select[name$="-seccion"]').empty().append($('<option></option>').text('Error al cargar secciones'));
+                }
+            });
+        } else {
+            // Si no hay tipo de equipo seleccionado, vaciar los selectores
+            $('select[name$="-seccion"]').empty();
+            todasLasSecciones = [];
+            console.log("No hay tipo de equipo seleccionado, se han vaciado todos los selectores");
+        }
+    });
+    
+    // Manejar el cambio en los selectores de sección para actualizar opciones
+    $(document).on('change', 'select[name$="-seccion"]', function() {
+        actualizarOpcionesSecciones();
+    });
+    
+    // Función para agregar nueva sección (por fila)
+    $(document).on('click', '.add-seccion', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Buscar el campo TOTAL_FORMS
+        var totalFormsField = $('input[name$="TOTAL_FORMS"]').first();
+        var prefix = totalFormsField.attr('name').replace('-TOTAL_FORMS', '');
+        var formCount = parseInt(totalFormsField.val());
+        
+        var $lastRow = $('#secciones-container tr.seccion-form:last');
+        var $newRow = $lastRow.clone(true);
+        
+        // Actualizar IDs y nombres con el nuevo índice
+        $newRow.find('input, select').each(function() {
+            var name = $(this).attr('name');
+            if (name) {
+                name = name.replace(new RegExp(prefix + '-(\\d+)-'), prefix + '-' + formCount + '-');
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id});
+                
+                // Limpiar valores
+                if (!$(this).is(':checkbox')) {
+                    $(this).val('');
+                } else {
+                    $(this).prop('checked', false);
+                }
+            }
+        });
+        
+        // Añadir la nueva fila
+        $('#secciones-container').append($newRow);
+        
+        // Incrementar el contador de formularios
+        totalFormsField.val(formCount + 1);
+        
+        // Renumerar las filas después de agregar
+        renumerarFilas();
+        
+        // Actualizar las opciones de las secciones
+        actualizarOpcionesSecciones();
+        
+        return false;
+    });
+    
+    // Función para eliminar sección (por fila)
+    $(document).on('click', '.delete-seccion', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var totalRows = $('#secciones-container tr.seccion-form:visible').length;
+        
+        if (totalRows > 1) {
+            var $row = $(this).closest('tr.seccion-form');
+            
+            // Si es un formulario existente, marcarlo para DELETE en lugar de eliminar
+            var $deleteInput = $row.find('input[name$="-DELETE"]');
+            if ($deleteInput.length) {
+                $deleteInput.prop('checked', true);
+                $row.hide();
+            } else {
+                $row.remove();
+            }
+            
+            // Renumerar las filas después de eliminar
+            renumerarFilas();
+            
+            // Actualizar las opciones de las secciones
+            actualizarOpcionesSecciones();
+        } else {
+            alert("Debe haber al menos una sección");
+        }
+        return false;
+    });
+    
+    // Cargar opciones iniciales si hay un tipo de equipo seleccionado
+    if ($('#id_tipoeq').val()) {
+        console.log("Cargando secciones iniciales...");
+        $('#id_tipoeq').trigger('change');
+    } else {
+        console.log("No hay tipo de equipo seleccionado inicialmente");
+    }
+    
+    // Debug: Mostrar estado al cargar la página
+    console.log("Estado inicial del formulario:");
+    console.log("Tipo de equipo:", $('#id_tipoeq').val());
+    console.log("Número de filas:", $('#secciones-container tr.seccion-form:visible').length);
+
+    // Función para cargar las especificaciones de una sección
+    function cargarEspecificaciones(seccionId, $contenedor) {
+        if (!seccionId) {
+            $contenedor.hide();
+            return;
+        }
+        
+        // Si ya tenemos las especificaciones en caché, usarlas
+        if (especificacionesPorSeccion[seccionId]) {
+            mostrarEspecificaciones(especificacionesPorSeccion[seccionId], $contenedor);
+            return;
+        }
+        
+        // Cargar las especificaciones mediante AJAX
+        $.ajax({
+            url: "{% url 'especificaciones_por_seccion' %}",
+            data: {
+                'seccion_id': seccionId
+            },
+            dataType: 'json',
+            success: function(data) {
+                console.log("Especificaciones recibidas:", data.especificaciones);
+                
+                // Guardar en caché
+                especificacionesPorSeccion[seccionId] = data.especificaciones;
+                
+                // Mostrar las especificaciones
+                mostrarEspecificaciones(data.especificaciones, $contenedor);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al cargar especificaciones:", error);
+                $contenedor.find('.especificaciones-lista').html('<tr><td colspan="4" class="text-center text-danger">Error al cargar especificaciones</td></tr>');
+                $contenedor.show();
+            }
+        });
+    }
+    
+    // Función para mostrar las especificaciones en el contenedor
+    function mostrarEspecificaciones(especificaciones, $contenedor) {
+        var $lista = $contenedor.find('.especificaciones-lista');
+        
+        if (!especificaciones || especificaciones.length === 0) {
+            $lista.html('<tr><td colspan="4" class="text-center">Esta sección no tiene especificaciones</td></tr>');
+        } else {
+            var html = '';
+            $.each(especificaciones, function(i, esp) {
+                html += '<tr>' +
+                    '<td>' + esp.orden + '</td>' +
+                    '<td>' + esp.especificacion + '</td>' +
+                    '<td>' + esp.tipodato + '</td>' +
+                    '<td>' + esp.unidadmedida + '</td>' +
+                '</tr>';
+            });
+            $lista.html(html);
+        }
+        
+        $contenedor.show();
+    }
+    
+    // Manejar clic en el botón de ver especificaciones
+    $(document).on('click', '.show-especificaciones', function() {
+        var $fila = $(this).closest('tr.seccion-form');
+        var $select = $fila.find('select[name$="-seccion"]');
+        var seccionId = $select.val();
+        var $contenedor = $fila.find('.especificaciones-contenedor');
+        
+        if (seccionId) {
+            if ($contenedor.is(':visible')) {
+                $contenedor.hide();
+            } else {
+                cargarEspecificaciones(seccionId, $contenedor);
+            }
+        } else {
+            alert("Primero debe seleccionar una sección");
+        }
+    });
+    
+    // Manejar clic en el botón de cerrar especificaciones
+    $(document).on('click', '.btn-toggle-specs', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).closest('.especificaciones-contenedor').hide();
+    });
+    
+    // Manejar cambio en los selectores de sección para mostrar/actualizar especificaciones
+    $(document).on('change', 'select[name$="-seccion"]', function() {
+        var $fila = $(this).closest('tr.seccion-form');
+        var seccionId = $(this).val();
+        var $contenedor = $fila.find('.especificaciones-contenedor');
+        
+        // Ocultar las especificaciones si cambia la sección
+        $contenedor.hide();
+    });
+});
+</script>
+{% endblock %} 
